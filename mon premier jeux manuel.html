@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mini Empire Galactique</title>
+  <style>
+    body {
+      background: radial-gradient(circle, #000000, #0a0a1a);
+      color: white;
+      text-align: center;
+      font-family: sans-serif;
+    }
+    h1 {
+      margin-top: 10px;
+    }
+    .planet {
+      display: inline-block;
+      margin: 15px;
+      padding: 20px;
+      border: 2px solid white;
+      border-radius: 50%;
+      width: 90px;
+      height: 90px;
+      font-size: 40px;
+      cursor: pointer;
+      user-select: none;
+      line-height: 90px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .planet:hover {
+      transform: scale(1.2);
+      border-color: yellow;
+    }
+    #scoreBoard, #resources, #level {
+      margin-top: 15px;
+      font-size: 20px;
+    }
+    button {
+      margin: 12px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 8px;
+      border: none;
+      background: linear-gradient(to right, #444, #777);
+      color: white;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: linear-gradient(to right, #666, #aaa);
+    }
+  </style>
+</head>
+<body>
+  <h1>🚀 Mini Empire Galactique 🚀</h1>
+  <p>Clique sur les planètes pour collecter des points, cristaux et énergie !</p>
+
+  <!-- Planètes -->
+  <div class="planet" onclick="collect(0)">🌍</div>
+  <div class="planet" onclick="collect(1)">🪐</div>
+  <div class="planet" onclick="collect(2)">☄️</div>
+  <div class="planet" onclick="collect(3)">🛸</div>
+  <div class="planet" onclick="collect(4)">🌑</div>
+  <div class="planet" onclick="collect(5)">🌞</div>
+  <div class="planet" onclick="collect(6)">🌌</div>
+
+  <div id="scoreBoard">Points : 0</div>
+  <div id="resources">Cristaux : 0 | Énergie : 0</div>
+  <div id="level">Niveau : 1</div>
+
+  <button onclick="upgradePlanet()">🔧 Améliorer les planètes (coût : <span id="upgradeCost">5</span> cristaux)</button>
+
+  <script>
+    let score = 0;
+    let crystals = 0;
+    let energy = 0;
+    let level = 1;
+    let upgradeCost = 5; // coût initial
+
+    // Planètes avec ressources équilibrées
+    const planets = [
+      {name: "🌍", points: 1, res: 2, energy: 1, level: 1},  // Terre
+      {name: "🪐", points: 2, res: 3, energy: 1, level: 1},  // Saturne
+      {name: "☄️", points: 3, res: 1, energy: 0, level: 1},  // Comète
+      {name: "🛸", points: 5, res: 5, energy: 2, level: 1},  // Vaisseau
+      {name: "🌑", points: 1, res: 0, energy: 3, level: 1},  // Lune
+      {name: "🌞", points: 8, res: 2, energy: -2, level: 1}, // Soleil
+      {name: "🌌", points: 1000000, res: 10, energy: 5, level: 1} // Galaxie
+    ];
+
+    function updateUI() {
+      document.getElementById('scoreBoard').innerText = "Points : " + score;
+      document.getElementById('resources').innerText = "Cristaux : " + crystals + " | Énergie : " + energy;
+      document.getElementById('level').innerText = "Niveau : " + level;
+      document.getElementById('upgradeCost').innerText = upgradeCost;
+    }
+
+    function collect(index) {
+      let p = planets[index];
+      score += p.points;
+      crystals += p.res;
+      energy += p.energy;
+
+      // On empêche l’énergie de descendre trop bas
+      if (energy < -20) {
+        alert("⚡ Tu as trop perdu d’énergie ! Restaure-la avant de continuer.");
+        energy = -20;
+      }
+
+      // Passage de niveau
+      if (score >= level * 20) {
+        level++;
+        alert("🌟 Bravo ! Tu passes au niveau " + level);
+      }
+
+      updateUI();
+    }
+
+    function upgradePlanet() {
+      if (crystals >= upgradeCost) {
+        crystals -= upgradeCost;
+        planets.forEach(p => {
+          p.level++;
+          p.points += 1;
+          p.res += 1;
+          if (p.energy > 0) p.energy += 1; // seules les planètes positives en énergie s'améliorent là-dessus
+        });
+
+        upgradeCost = Math.floor(upgradeCost * 2);
+        alert("🔧 Toutes tes planètes ont été améliorées !");
+      } else {
+        alert("❌ Pas assez de cristaux !");
+      }
+      updateUI();
+    }
+
+    updateUI();
+  </script>
+</body>
+</html>
